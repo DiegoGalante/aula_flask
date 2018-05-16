@@ -1,8 +1,9 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///storage.db'
+db = SQLAlchemy(app)
 
-#importando a página default
-#no python3 é necessário colocar o caminho completo do import e não mais o caminnho relativo igual era no python2
 from app.controllers import default
 
