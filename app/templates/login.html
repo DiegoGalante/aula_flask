@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{%block content%}
+<div class="col-md-3 col-md-offset-3" style="margin: 0 auto; margin-top:150px;">
+    <form action="" method="POST">
+        <!--Campo de segurança que o WTF cria e tem que ser adicionado junto com o formulário. Se nao tiver junto, o formulário não é válido-->
+        {{form.csrf_token}}
+            <h1 class="h3 mb-3 font-weight-normal">Login</h1>
+            <label>Username</label>
+                {{ form.username(class="form-control", placeholder=" Seu usuário") }}
+                {% if form.errors.username %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                    {% for e in form.errors.username%}
+                        <li> {{ e }}</li>
+                    {%endfor%}
+                    </ul>
+                </div>
+                {%endif%}
+            <label>Password</label>
+                {{ form.password(class="form-control")  }}  
+                {% if form.errors.password %}
+                <div class="alert alert-danger" role="alert">
+                        <ul>
+                            {% for e in form.errors.password%}
+                                <li> {{ e }}</li>
+                            {%endfor%}
+                        </ul>
+                </div>
+                {%endif%}
+            <div class="checkbox mb-3">
+            <label>
+                    {{ form.remember_me }} Remember-me
+            </label>
+            </div>
+            <div class="mb-3 font-weight-normal">
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            </div>
+            
+        </form>    
+    </div>
+{% endblock %}
