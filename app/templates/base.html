@@ -22,11 +22,18 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
+          {% if current_user.is_authenticated %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{{url_for('index')}}">Home <span class="sr-only">(current)</span></a>
+            </li>
+          {% endif %}
+          
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            {% if current_user.is_authenticated %}
+              <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+            {% else %}
+            <a class="nav-link" href="{{url_for('login')}}">Login</a>
+            {% endif %}
           </li>
           <li class="nav-item">
             <a class="nav-link disabled" href="#">Disabled</a>
@@ -46,6 +53,20 @@
         </form>
       </div>
     </nav>
+
+    
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning">
+          <ul class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      {% endwith %}
+      {% block body %}{% endblock %}
 
     <main role="main">
     {% block content%}

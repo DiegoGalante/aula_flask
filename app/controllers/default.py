@@ -1,26 +1,38 @@
-#Vai receber um arquivo html e vai renderizá-lo
-from flask import render_template
-from app import app, db
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import login_user, logout_user, current_user, login_required
+from app import app, db, lm
 
 from app.models.tables import User
 from app.models.forms import LoginForm
 
+@lm.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
 @app.route("/index")
 @app.route("/")
 def index():
-    return render_template('index.html')
+    if current_user.is_authenticated:
+        return render_template('index.html')
+    else:
+       return redirect(url_for('login'))
 
 @app.route("/login", methods=["GET","POST"])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        print(form.username.data)
-        print(form.password.data)
-        print(form.remember_me.data)
-        pass
-    else:
-        print(form.errors)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=form.username.data).first()
+            if user and user.password == form.password.data:
+                login_user(user,  remember=form.remember_me.data)
+                return redirect(url_for("index"))
+        
     return render_template('login.html', form=form)
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("index"))
 
 
 @app.route("/teste", defaults={"info": None})
@@ -35,8 +47,8 @@ def teste(info):
     #.all()
     #.first()
     ## olhar a documentação para ver os demais tipos de query
-    #r = User.query.filter_by(username='diego').first()
-    #print(r)
+    r = User.query.filter_by(username='diego').first()
+    print(r)
 
     #UPDATE
     #r = User.query.filter_by(username='diego').first()
@@ -48,9 +60,9 @@ def teste(info):
     #db.session.commit()
 
     #DELETE
-    r = User.query.filter_by(username='diego').first()
-    print(r)
-    db.session.delete(r)
-    db.session.commit()
+    # r = User.query.filter_by(username='diego').first()
+    # print(r)
+    # db.session.delete(r)
+    # db.session.commit()
     return "OK"
 
